@@ -55,7 +55,57 @@ public class TaskExecuteProcessor implements NettyRequestProcessor {
     /**
      *  thread executor service
      */
-    private final ExecutorService workerExecService;
+//    private final ExecutorService workerExecService;
+
+    /**
+     * shell thread executor service
+     */
+    private final ExecutorService shellExecService;
+
+    /**
+     * proceduer thread executor service
+     */
+    private final ExecutorService proceduerExecService;
+
+    /**
+     * sql thread executor service
+     */
+    private final ExecutorService sqlThreadExecService;
+
+    /**
+     * spark thread executor service
+     */
+    private final ExecutorService sparkThreadExecutorService;
+
+    /**
+     * flink thread executor service
+     */
+    private final ExecutorService flinkThreadExecutorService;
+
+    /**
+     * mr thread exceutor service
+     */
+    private final ExecutorService mrThreadExecutorService;
+
+    /**
+     * python thread executor service
+     */
+    private final ExecutorService pythonThreadExecutorService;
+
+    /**
+     * http thread executor service
+     */
+    private final ExecutorService httpThreadExecutorService;
+
+    /**
+     * datax thread executor service
+     */
+    private final ExecutorService dataxExecutorService;
+
+    /**
+     * sqoop thread executor service
+     */
+    private final ExecutorService sqoopThreadExecutor;
 
     /**
      *  worker config
@@ -70,7 +120,17 @@ public class TaskExecuteProcessor implements NettyRequestProcessor {
     public TaskExecuteProcessor(){
         this.taskCallbackService = SpringApplicationContext.getBean(TaskCallbackService.class);
         this.workerConfig = SpringApplicationContext.getBean(WorkerConfig.class);
-        this.workerExecService = ThreadUtils.newDaemonFixedThreadExecutor("Worker-Execute-Thread", workerConfig.getWorkerExecThreads());
+//        this.workerExecService = ThreadUtils.newDaemonFixedThreadExecutor("Worker-Execute-Thread", workerConfig.getWorkerExecThreads());
+        this.shellExecService = ThreadUtils.newDaemonFixedThreadExecutor("Shell-Execute-Thread", workerConfig.getShellExecThreads());
+        this.proceduerExecService = ThreadUtils.newDaemonFixedThreadExecutor("Proceduer-Execute-Thread", workerConfig.getProdecuerExecThreads());
+        this.sqlThreadExecService = ThreadUtils.newDaemonFixedThreadExecutor("Sql-Execute-Thread", workerConfig.getSqlExecThreads());
+        this.sparkThreadExecutorService = ThreadUtils.newDaemonFixedThreadExecutor("Spark-Execute-Thread", workerConfig.getSparkExecThreads());
+        this.flinkThreadExecutorService = ThreadUtils.newDaemonFixedThreadExecutor("Flink-Execute-Thread", workerConfig.getFlinkExecThreads());
+        this.mrThreadExecutorService = ThreadUtils.newDaemonFixedThreadExecutor("Mr-Execute-Thread", workerConfig.getMrExecThreads());
+        this.pythonThreadExecutorService = ThreadUtils.newDaemonFixedThreadExecutor("Python-Execute-Thread", workerConfig.getPythonExecThreads());
+        this.httpThreadExecutorService = ThreadUtils.newDaemonFixedThreadExecutor("Http-Execute-Thread", workerConfig.getHttpExecThreads());
+        this.dataxExecutorService = ThreadUtils.newDaemonFixedThreadExecutor("Datax-Execute-Thread", workerConfig.getDataXExceThreads());
+        this.sqoopThreadExecutor = ThreadUtils.newDaemonFixedThreadExecutor("Sqoop-Execute-Thread", workerConfig.getSqoopExecThreads());
     }
 
     @Override
@@ -108,8 +168,46 @@ public class TaskExecuteProcessor implements NettyRequestProcessor {
                 taskCallbackService.sendAck(taskExecutionContext.getTaskInstanceId(),ackCommand);
                 return Boolean.TRUE;
             });
+
+            TaskExecuteThread taskExecuteThread = new TaskExecuteThread(taskExecutionContext, taskCallbackService);
             // submit task
-            workerExecService.submit(new TaskExecuteThread(taskExecutionContext, taskCallbackService));
+            switch (EnumUtils.getEnum(TaskType.class, taskExecutionContext.getTaskType())) {
+                case SHELL:
+                    shellExecService.submit(taskExecuteThread);
+                    break;
+                case PROCEDURE:
+                    proceduerExecService.submit(taskExecuteThread);
+                    break;
+                case SQL:
+                    sqlThreadExecService.submit(taskExecuteThread);
+                    break;
+                case MR:
+                    mrThreadExecutorService.submit(taskExecuteThread);
+                    break;
+                case SPARK:
+                    sparkThreadExecutorService.submit(taskExecuteThread);
+                    break;
+                case FLINK:
+                    flinkThreadExecutorService.submit(taskExecuteThread);
+                    break;
+                case PYTHON:
+                    pythonThreadExecutorService.submit(taskExecuteThread);
+                    break;
+                case HTTP:
+                    httpThreadExecutorService.submit(taskExecuteThread);
+                    break;
+                case DATAX:
+                    dataxExecutorService.submit(taskExecuteThread);
+                    break;
+                case SQOOP:
+                    sqoopThreadExecutor.submit(taskExecuteThread);
+                    break;
+                default:
+                    logger.error("unsupport task type: {}", taskExecutionContext.getTaskType());
+                    throw new IllegalArgumentException("not support task type");
+            }
+            // submit task
+//            workerExecService.submit(new TaskExecuteThread(taskExecutionContext, taskCallbackService));
         } catch (ExecutionException | RetryException e) {
             logger.error(e.getMessage(), e);
         }

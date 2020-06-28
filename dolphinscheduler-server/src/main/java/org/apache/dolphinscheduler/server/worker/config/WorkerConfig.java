@@ -47,6 +47,36 @@ public class WorkerConfig {
     @Value("${worker.listen.port: 1234}")
     private int listenPort;
 
+    @Value("${sqoop.exec.threads:5}")
+    private int sqoopExecThreads;
+
+    @Value("${datax.exec.threads:5}")
+    private int dataXExceThreads;
+
+    @Value("${http.exec.threads:5}")
+    private int httpExecThreads;
+
+    @Value("${python.exec.threads:5}")
+    private int pythonExecThreads;
+
+    @Value("${mr.exec.threads:5}")
+    private int mrExecThreads;
+
+    @Value("${flink.exec.threads:5}")
+    private int flinkExecThreads;
+
+    @Value("${spark.exec.threads:5}")
+    private int sparkExecThreads;
+
+    @Value("${sql.exec.threads:5}")
+    private int sqlExecThreads;
+
+    @Value("${proceduer.exec.threads:5}")
+    private int prodecuerExecThreads;
+
+    @Value("${shell.exec.threads:5}")
+    private int shellExecThreads;
+
     public int getListenPort() {
         return listenPort;
     }
@@ -104,5 +134,85 @@ public class WorkerConfig {
 
     public void setWorkerMaxCpuloadAvg(int workerMaxCpuloadAvg) {
         this.workerMaxCpuloadAvg = workerMaxCpuloadAvg;
+    }
+
+    public int getSqoopExecThreads() {
+        return sqoopExecThreads;
+    }
+
+    public void setSqoopExecThreads(int sqoopExecThreads) {
+        this.sqoopExecThreads = sqoopExecThreads;
+    }
+
+    public int getDataXExceThreads() {
+        return dataXExceThreads;
+    }
+
+    public void setDataXExceThreads(int dataXExceThreads) {
+        this.dataXExceThreads = dataXExceThreads;
+    }
+
+    public int getHttpExecThreads() {
+        return httpExecThreads;
+    }
+
+    public void setHttpExecThreads(int httpExecThreads) {
+        this.httpExecThreads = httpExecThreads;
+    }
+
+    public int getPythonExecThreads() {
+        return pythonExecThreads;
+    }
+
+    public void setPythonExecThreads(int pythonExecThreads) {
+        this.pythonExecThreads = pythonExecThreads;
+    }
+
+    public int getMrExecThreads() {
+        return mrExecThreads;
+    }
+
+    public void setMrExecThreads(int mrExecThreads) {
+        this.mrExecThreads = mrExecThreads;
+    }
+
+    public int getFlinkExecThreads() {
+        return flinkExecThreads;
+    }
+
+    public void setFlinkExecThreads(int flinkExecThreads) {
+        this.flinkExecThreads = flinkExecThreads;
+    }
+
+    public int getSparkExecThreads() {
+        return sparkExecThreads;
+    }
+
+    public void setSparkExecThreads(int sparkExecThreads) {
+        this.sparkExecThreads = sparkExecThreads;
+    }
+
+    public int getSqlExecThreads() {
+        return sqlExecThreads;
+    }
+
+    public void setSqlExecThreads(int sqlExecThreads) {
+        this.sqlExecThreads = sqlExecThreads;
+    }
+
+    public int getProdecuerExecThreads() {
+        return prodecuerExecThreads;
+    }
+
+    public void setProdecuerExecThreads(int prodecuerExecThreads) {
+        this.prodecuerExecThreads = prodecuerExecThreads;
+    }
+
+    public int getShellExecThreads() {
+        return shellExecThreads;
+    }
+
+    public void setShellExecThreads(int shellExecThreads) {
+        this.shellExecThreads = shellExecThreads;
     }
 }
